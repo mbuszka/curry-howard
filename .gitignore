@@ -1,0 +1,8 @@
+.stack-work/
+curry-howard.cabal
+*~
+slides.nav
+slides.snm
+slides.synctex*
+slides.vrb
+.vscode/

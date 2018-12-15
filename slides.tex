@@ -1,0 +1,186 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  \usecolortheme{default}
+  \usefonttheme{default}
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{ebproof}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{amssymb}
+ 
+\title[Put Curry-Howard to Work]{Put Curry-Howard to Work}
+\author{Maciej Buszka}
+\institute{Instytut Informatyki UWr}
+\date{17.12.2018}
+
+\lstset{language=Haskell}
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}{Wprowadzenie}
+  \begin{itemize}
+    \item Artykuł, na podstawie którego stworzona jest ta prezentacja pojawił się w 2005 roku.
+    \item W tamtych czasach Haskell nie posiadał rozszerzeń opisanych w artykule.
+    \item Dlatego autor opisuje je w języku $\Omega$mega - podobnym do Haskella
+    \item Aktualnie wszystkie rozszerzenia są dostępne w GHC (aczkolwiek niektóre mają inną implementację)
+    \item Na tej prezentacji będę korzystał z Haskella
+  \end{itemize}
+\end{frame}
+
+\section{System typów w Haskellu}
+\subsection{Typy i wartości}
+\begin{frame}[fragile]{Typy i wartości}
+  \begin{itemize}
+    \item W Haskellu mamy do dyspozycji typy wbudowane np. \lstinline!Int!, \lstinline!Char!
+    \item Zdefiniowane w bibliotece standardowej np. \lstinline!String!, \lstinline![a]!
+    \item Oraz zdefiniowane przez użytkownika:\\ \begin{lstlisting}
+      data Person = Person 
+        { name :: String
+        , age  :: Int
+        }
+  
+      data Maybe a 
+        = Just a
+        | Nothing
+    \end{lstlisting}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Typy i wartości}
+  Definicja \lstinline!data Person = Person { ... }! wprowadza:
+  \begin{itemize}
+    \item Nową stałą typową \lstinline!Person!
+    \item Nowy konstruktor \lstinline!Person :: String → Int → Person!
+  \end{itemize}
+  \vspace{1em}
+  Natomiast \lstinline!data Maybe a = Just a | Nothing! wprowadza:
+  \begin{itemize}
+    \item Nowy konstruktor typów \lstinline!Maybe!
+    \item Dwa konstruktory:
+    \item \lstinline!Just :: a → Maybe a!
+    \item \lstinline!Nothing :: Maybe a!
+  \end{itemize}
+\end{frame}
+
+\subsection{Rodzaje i typy}
+\begin{frame}[fragile]{Rodzaje i typy}
+  \begin{itemize}
+    \item Tak jak klasyfikujemy wartości za pomocą typów, typy są klasyfikowane poprzez rodzaje
+    \item W standardowym Haskellu dostępna jest jedna stała rodzajowa \lstinline!Type! opisująca typy wartości np: \lstinline!Int :: Type!
+    \item Oraz jeden konstruktor rodzajów \lstinline{ →}
+    \item Przykładowo konstruktor typów może mieć rodzaj \lstinline!Maybe :: Type → Type!
+    \item Nazwę \lstinline{Type} należy zaimportować z modułu \lstinline{Data.Kind}
+    \item Kiedyś \lstinline{Type} nazywał się \lstinline{*}
+  \end{itemize}
+\end{frame}
+
+\section{Rozszerzenia}
+
+\subsection{Rodzaje definiowane przez użytkownika}
+
+\begin{frame}[fragile]{Rodzaje definiowane przez użytkownika}
+    \begin{itemize}
+      \item Rozszerzenie \lstinline!DataKinds! pozwala na użycie definicji danych jako definicji nowego rodzaju
+      \item Przykładowo definicja\\
+      \begin{lstlisting}
+        data Nat = Z | S Nat
+      \end{lstlisting}
+        wprowadza rodzaj \lstinline! 'Nat!, stałą typową \lstinline! 'Z :: 'Nat! oraz konstruktor typów \lstinline! 'S :: 'Nat → 'Nat!
+      \item Jeżeli jest to jednoznaczne można opuścić \texttt{'}
+      \item Warto zauważyć, że takie promowane typy nie klasyfikują żadnych wartości
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Klasyfikacje rodzajów}
+  \begin{itemize}
+    \item Gdy już mamy ciekawszy język typów i rodzajów pojawia się naturalne pytanie jak je sklasyfikować
+    \item Jednym z podejść jest wybrane w artykule, polegające na konstrukcji hierarchii rodzajów:
+    \begin{itemize}
+      \item \lstinline{Int :: Type0}, \lstinline{Int → Bool :: Type0}, \lstinline{Maybe :: Type0 → Type0}
+      \item \lstinline{Type0 :: Type1}, \lstinline{Type0 → Type0 :: Type1}
+      \item rodzaj z poziomu $n+1$ klasyfikuje rzeczy z poziomu $n$
+    \end{itemize} 
+    \item Natomiast w Haskellu postanowiono dodać aksjomat \lstinline{Type :: Type}
+  \end{itemize}
+\end{frame}
+
+\subsection{GADTs}
+\begin{frame}[fragile]{GADTs}
+  \begin{itemize}
+    \item Rozszerzenie \lstinline!GADTs! pozwala na ogólniejsze definicje konstruktorów
+    \item Korzystając z nowej składni możemy definiować algebraiczne typy danych jak wcześniej:
+    \begin{lstlisting}
+      data Maybe a where
+        Just    :: a → Maybe a
+        Nothing :: Maybe a
+    \end{lstlisting}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{GADTs}
+  \begin{itemize}
+    \item Rozszerzenie \lstinline!GADTs! pozwala na ogólniejsze definicje konstruktorów
+    \item Ale także:
+    \begin{lstlisting}
+data IntOrBool a where
+  AnInt :: IntOrBool Int
+  ABool :: IntOrBool Bool
+    \end{lstlisting}
+    \item Takie ukonkretnienie typu jest widoczne podczas destrukcji:
+  \end{itemize}
+\begin{lstlisting}
+check :: IntOrBool a → String
+check (AnInt i) = "An Int " ++ show (i + 42)
+check (ABool b) = "A Bool " ++ show (not b) 
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{GADTs}
+  Definicję postaci:
+  \begin{lstlisting}
+    data IntOrBool a where
+      AnInt :: IntOrBool Int
+      ABool :: IntOrBool Bool
+  \end{lstlisting}
+  możemy równoważnie przepisać jako:
+  \begin{lstlisting}[mathescape]
+    data IntOrBool a where
+      AnInt :: (a ~ Int)  $\Rightarrow$ IntOrBool a
+      ABool :: (a ~ Bool) $\Rightarrow$ IntOrBool a
+  \end{lstlisting}
+  gdzie \lstinline{~} wprowadza nowe ograniczenie do rozwiązania przez system typów.
+\end{frame}
+
+
+\subsection{Rodziny typów}
+\begin{frame}[fragile]{Rodziny typów}
+  \begin{itemize}
+    \item Rozszerzenie \lstinline{TypeFamilies} pozwala nam na definicje funkcji na poziomie typów
+    \item Przykładowo:
+\begin{lstlisting}
+type family Add n m :: Nat where
+  Add Z     m = m
+  Add (S n) m = S (Add n m)
+\end{lstlisting}
+definiuje funkcję dodającą do siebie dwie liczby naturalne zakodowane jako rodzaj \lstinline!Nat!
+  \end{itemize}
+\end{frame}
+
+
+\section{Przykłady i wzorce}
+\begin{frame}{Przykłady i wzorce}
+  Teraz popatrzymy na różne przykłady i wzorce zastosowań
+\end{frame}
+
+\end{document}
