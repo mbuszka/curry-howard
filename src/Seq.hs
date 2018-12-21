@@ -37,13 +37,6 @@ map f Nil = Nil
 map f (Cons x xs) = Cons (f x) (Seq.map f xs)
 
 
-
--- EXERCISE 1
-transpose :: Seq n (Seq m a) -> Seq m (Seq n a)
-transpose = undefined
-
-
-
 {- Helper functions -}
 toList :: Seq n a -> [a]
 toList Nil = []
