@@ -4,7 +4,7 @@
   , GADTs
   #-}
 
-module Paper.Nat where
+module Nat where
 
 import Data.Kind
 
@@ -29,12 +29,15 @@ type family Add n m :: Nat where
 
 
 {-  PATTERN Singleton types
-    A one-to-one reflection of a type into runtime data structure.
+    A one-to-one reflection of a type into
+    runtime data structure.
 -}
 data SNat :: Nat -> Type where
   SZ :: SNat Z
   SS :: SNat n -> SNat (S n)
 
+sthree :: SNat (S (S (S Z)))
+sthree = SS (SS (SS SZ))
 
 
 one = SS SZ
@@ -50,7 +53,8 @@ add (SS n) m = SS (add n m)
 
 
 {-  PATTERN Propositions
-    Data types which are proofs of some propositions about types
+    Data types which are proofs of some propositions
+    about types
 -}
 data Even :: Nat -> Type where
   EvenZ  :: Even Z

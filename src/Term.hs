@@ -2,7 +2,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE GADTs #-}
 
-module Paper.Term where
+module Term where
 
 data Term a where
   Const :: a -> Term a

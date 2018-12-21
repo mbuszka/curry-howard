@@ -11,12 +11,11 @@
 
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
-\usepackage{ebproof}
 \usepackage{listings}
 \usepackage{amsmath}
 \usepackage{amssymb}
  
-\title[Put Curry-Howard to Work]{Put Curry-Howard to Work}
+\title[Putting Curry-Howard to Work]{Putting Curry-Howard to Work}
 \author{Maciej Buszka}
 \institute{Instytut Informatyki UWr}
 \date{17.12.2018}
@@ -24,19 +23,32 @@
 \lstset{language=Haskell}
 \begin{document}
 
+
 \begin{frame}
 	\titlepage
 \end{frame}
 
-\begin{frame}{Wprowadzenie}
+
+\begin{frame}{Curry-Howard vs programowanie}
+  \begin{itemize}
+    \item Izomorfizm Curry'ego-Howarda mówi nam o odpowiedniości typów i twierdzeń oraz dowodów i programów
+    \item Jednak twierdzenia które dowodzimy pisząc w klasycznym języku programowania nie są specjalnie ciekawe
+    \item Chcielibyśmy aby typy stanowiły twierdzenia o właściwościach programów które piszemy
+    \item W tym celu musimy rozszerzyć język typów
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Uwagi techniczne}
   \begin{itemize}
     \item Artykuł, na podstawie którego stworzona jest ta prezentacja pojawił się w 2005 roku.
     \item W tamtych czasach Haskell nie posiadał rozszerzeń opisanych w artykule.
-    \item Dlatego autor opisuje je w języku $\Omega$mega - podobnym do Haskella
+    \item Dlatego autor (Tim Sheard) opisuje je w języku $\Omega$mega - podobnym do Haskella
     \item Aktualnie wszystkie rozszerzenia są dostępne w GHC (aczkolwiek niektóre mają inną implementację)
-    \item Na tej prezentacji będę korzystał z Haskella
+    \item Na tej prezentacji będę korzystał z Haskella, kompilowanego \texttt{GHC 8.6.x}
   \end{itemize}
 \end{frame}
+
 
 \section{System typów w Haskellu}
 \subsection{Typy i wartości}
@@ -57,6 +69,7 @@
   \end{itemize}
 \end{frame}
 
+
 \begin{frame}[fragile]{Typy i wartości}
   Definicja \lstinline!data Person = Person { ... }! wprowadza:
   \begin{itemize}
@@ -73,6 +86,7 @@
   \end{itemize}
 \end{frame}
 
+
 \subsection{Rodzaje i typy}
 \begin{frame}[fragile]{Rodzaje i typy}
   \begin{itemize}
@@ -85,10 +99,9 @@
   \end{itemize}
 \end{frame}
 
+
 \section{Rozszerzenia}
-
 \subsection{Rodzaje definiowane przez użytkownika}
-
 \begin{frame}[fragile]{Rodzaje definiowane przez użytkownika}
     \begin{itemize}
       \item Rozszerzenie \lstinline!DataKinds! pozwala na użycie definicji danych jako definicji nowego rodzaju
@@ -96,11 +109,12 @@
       \begin{lstlisting}
         data Nat = Z | S Nat
       \end{lstlisting}
-        wprowadza rodzaj \lstinline! 'Nat!, stałą typową \lstinline! 'Z :: 'Nat! oraz konstruktor typów \lstinline! 'S :: 'Nat → 'Nat!
+        wprowadza dodatkowo rodzaj \lstinline! 'Nat!, stałą typową \lstinline! 'Z :: 'Nat! oraz konstruktor typów \lstinline! 'S :: 'Nat → 'Nat!
       \item Jeżeli jest to jednoznaczne można opuścić \texttt{'}
       \item Warto zauważyć, że takie promowane typy nie klasyfikują żadnych wartości
     \end{itemize}
 \end{frame}
+
 
 \begin{frame}[fragile]{Klasyfikacje rodzajów}
   \begin{itemize}
@@ -115,6 +129,7 @@
   \end{itemize}
 \end{frame}
 
+
 \subsection{GADTs}
 \begin{frame}[fragile]{GADTs}
   \begin{itemize}
@@ -127,6 +142,7 @@
     \end{lstlisting}
   \end{itemize}
 \end{frame}
+
 
 \begin{frame}[fragile]{GADTs}
   \begin{itemize}
@@ -145,6 +161,7 @@ check (AnInt i) = "An Int " ++ show (i + 42)
 check (ABool b) = "A Bool " ++ show (not b) 
 \end{lstlisting}
 \end{frame}
+
 
 \begin{frame}[fragile]{GADTs}
   Definicję postaci:
@@ -180,7 +197,39 @@ definiuje funkcję dodającą do siebie dwie liczby naturalne zakodowane jako r
 
 \section{Przykłady i wzorce}
 \begin{frame}{Przykłady i wzorce}
-  Teraz popatrzymy na różne przykłady i wzorce zastosowań
+  \begin{itemize}
+    \item przykłady z artykułu, przetłumaczone na Haskella
+    \item \href{https://github.com/goldfirere/glambda}{GLambda} autorstwa Richarda Eisenberga
+    \item \href{https://github.com/sweirich/dth}{Dependently typed Haskell} autorstwa Stephanie Weirich
+    \item \href{https://github.com/goldfirere/singletons}{biblioteka singletons} pozwalająca na automatyczne generowanie singletonów
+    \item Kod z artykułów Justina Le
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Bibliografia}
+  \begin{thebibliography}{10}
+		\setbeamertemplate{bibliography item}[article]
+  	\bibitem{curryHoward}
+    	Tim Sheard
+    	\newblock {\em Putting Curry-Howard to Work}
+		\setbeamertemplate{bibliography item}[article]
+		\bibitem{singletonsPaper}
+			Richard A. Eisenberg
+			\newblock {\em Dependently Typed Programming with Singletons}.
+		\setbeamertemplate{bibliography item}[online]
+  	\bibitem{introToSingletons}
+    	Justin Le
+      \newblock {\em \href{https://blog.jle.im/entries/series/+introduction-to-singletons.html}{Introduction to Singletons}}.
+    \setbeamertemplate{bibliography item}[online]
+      \bibitem{glambda}
+        \href{https://github.com/goldfirere/glambda}{GLambda}
+    \setbeamertemplate{bibliography item}[online]
+      \bibitem{dth}
+        \href{https://github.com/sweirich/dth}{Dependently typed Haskell}
+    \setbeamertemplate{bibliography item}[online]
+      \bibitem{singletonsLib}
+        \href{https://github.com/goldfirere/singletons}{singletons}
+  \end{thebibliography}
 \end{frame}
 
 \end{document}

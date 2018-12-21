@@ -6,9 +6,9 @@
   , FlexibleInstances
   #-}
 
-module Paper.Sorted where
+module Sorted where
 
-import Paper.Nat
+import Nat
 import Data.Kind
 
 
@@ -73,8 +73,13 @@ sort xs = let
 
 -- Typeclass which statically estabilishes that n <= m
 class SLE (n :: Nat) (m :: Nat) where
+  witness :: LE n m
+
 instance SLE Z m where
+  witness = Base
+
 instance SLE n m => SLE (S n) (S m) where
+  witness = Step witness
 
 
 

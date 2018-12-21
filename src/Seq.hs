@@ -2,26 +2,26 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE GADTs #-}
 
-module Paper.Seq where
+module Seq where
 
-import Paper.Nat
+import Nat
 
 
 
 {-  PATTERN Indexed datatypes
-    Data types indexed with custom types which assert some properties
+    Data types indexed with custom types which assert
+    some properties
 -}
 -- A type of length indexed sequences
 data Seq :: Nat -> * -> * where
   Nil :: Seq Z a
   Cons :: a -> Seq n a -> Seq (S n) a
 
-
+example1 = Cons "a" (Cons "b" (Cons "c" Nil))
 
 -- Head of nonempty sequence
 head :: Seq (S _n) a -> a
 head (Cons x _) = x
-
 
 
 -- Appending two sequences
@@ -34,7 +34,7 @@ app (Cons x xs) ys = Cons x (app xs ys)
 -- Mapping a function over sequence preserves length
 map :: (a -> b) -> Seq n a -> Seq n b
 map f Nil = Nil
-map f (Cons x xs) = Cons (f x) (Paper.Seq.map f xs)
+map f (Cons x xs) = Cons (f x) (Seq.map f xs)
 
 
 

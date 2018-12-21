@@ -6,10 +6,10 @@
   , TypeSynonymInstances
   #-}
 
-module Paper.Mod where
+module Mod where
 
 import Data.Kind
-import Paper.Nat
+import Nat
 
 
 {- Datatype for integers modulo n -}
@@ -46,7 +46,7 @@ instance Prime (S (S (S Four))) where
 invM :: Prime n => Mod n -> Mod n
 invM (Mod a n) = Mod (b `mod` n') n where
   n' = toInt n
-  (_, _, b) = Paper.Mod.gcd n' a
+  (_, _, b) = Mod.gcd n' a
 
 
 
@@ -55,8 +55,8 @@ invM (Mod a n) = Mod (b `mod` n') n where
 instance Show (Mod n) where
   show (Mod x n) = "Mod " ++ show x ++ " " ++ show (toInt n)
 
-gcd p q | p < q = Paper.Mod.gcd q p
+gcd p q | p < q = Mod.gcd q p
 gcd p q | q == 0 = (p, 1, 0)
 gcd p q = (g, y1, x1 - (p `div` q) * y1)
-  where (g, x1, y1) = Paper.Mod.gcd q (p `mod` q)
+  where (g, x1, y1) = Mod.gcd q (p `mod` q)
   
