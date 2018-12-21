@@ -3,6 +3,8 @@
 This repository contains slides `slides.pdf` and code for my seminar talk,
 based on paper *Putting Curry-Howard to Work* by Tim Sheard.
 
+Code can built using `stack build`.
+
 # Homework
 1. implement `length    :: Seq n a -> SNat n`
 2. implement `replicate :: SNat n -> a -> Seq n a`
